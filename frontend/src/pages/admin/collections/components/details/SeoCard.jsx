@@ -1,0 +1,33 @@
+import DetailCard from "../../../../../components/common/DetailCard";
+import DetailItem from "../../../../../components/common/DetailItem";
+
+
+export default function SeoCard({
+  collection,
+}) {
+  return (
+    <DetailCard
+      title="SEO Information"
+      subtitle="Search engine optimization details."
+    >
+      <div className="grid gap-6 md:grid-cols-2">
+        <DetailItem
+          label="Meta Title"
+          value={collection?.metaTitle}
+        />
+
+        <DetailItem
+          label="Meta Keywords"
+          value={collection?.metaKeywords}
+        />
+      </div>
+
+      <div className="mt-8">
+        <DetailItem
+          label="Meta Description"
+          value={collection?.metaDescription}
+        />
+      </div>
+    </DetailCard>
+  );
+}

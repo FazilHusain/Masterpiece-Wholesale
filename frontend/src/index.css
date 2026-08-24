@@ -1,0 +1,77 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700;800&display=swap");
+
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-primary: #0f2f2a;
+  --color-gold: #b68c2f;
+  --color-background: #faf8f5;
+  --color-border: #e8e3da;
+  --color-text: #1f1f1f;
+
+  /* Fonts */
+  --font-cormorant: "Cormorant Garamond", serif;
+  --font-manrope: "Manrope", sans-serif;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-manrope);
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade {
+  animation: fadeSlide 0.45s ease;
+}
+
+.nav-link {
+  position: relative;
+  transition: 0.35s ease;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+  width: 0;
+  height: 2px;
+  background: #b38b59;
+  transition: 0.35s ease;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
+}
+
+.group:hover .mega-card {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.mega-card {
+  transform: translateY(20px);
+  opacity: 0;
+  transition: 0.35s;
+}
