@@ -42,6 +42,14 @@ export default function ProductInformation({
         />
 
         <Input
+          label="Hs Code"
+          name="hsCode"
+          value={formData.hsCode}
+          onChange={handleChange}
+          placeholder="Blue"
+        />
+
+        <Input
           label="Country of Origin"
           name="countryOfOrigin"
           value={formData.countryOfOrigin}

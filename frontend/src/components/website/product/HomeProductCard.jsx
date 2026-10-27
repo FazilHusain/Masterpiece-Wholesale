@@ -7,7 +7,7 @@ export default function HomeProductCard({ product }) {
 
   const price = firstVariant?.price;
 
-  const stock = firstVariant?.stock;
+ //const stock = firstVariant?.stock;
 
   return (
     <article className="group min-w-0">
@@ -50,7 +50,7 @@ export default function HomeProductCard({ product }) {
               bg-[#203529]
               px-2.5
               py-1.5
-              text-[9px]
+              text-[10px]
               font-semibold
               uppercase
               tracking-[0.12em]
@@ -138,7 +138,7 @@ export default function HomeProductCard({ product }) {
         )}
 
         {/* Stock */}
-        {stock > 0 && (
+        {/* {stock > 0 && (
           <div className="mt-2">
             <span
               className="
@@ -156,7 +156,7 @@ export default function HomeProductCard({ product }) {
               In Stock
             </span>
           </div>
-        )}
+        )} */}
       </div>
     </article>
   );

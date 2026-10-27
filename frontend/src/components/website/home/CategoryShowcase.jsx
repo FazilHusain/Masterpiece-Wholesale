@@ -6,15 +6,15 @@ import { fetchWebsiteProducts } from "../../../redux/websiteProduct";
 
 const categorySections = [
   {
-    id: "bedsheets",
+    id: "bed-sheets",
     eyebrow: "BED LINEN",
     title: "Luxury Bedsheets",
     highlight: "Timeless Comfort",
     description:
-      "Explore refined bedsheets crafted from premium fabrics with elegant patterns, soft textures and timeless craftsmanship.",
-    image: "/images/categories/bedsheets-banner.webp",
+      "Premium bedsheets with elegant patterns, soft textures and timeless craftsmanship.",
+    image: "/images/categories/bedsheet.jpg",
     buttonText: "Explore Bedsheets",
-    buttonLink: "/categories/bedsheets",
+    buttonLink: "/categories/bed-sheets",
   },
 
   {
@@ -23,22 +23,22 @@ const categorySections = [
     title: "Statement Cushions",
     highlight: "Artisan Details",
     description:
-      "Bring character to every space with handcrafted cushions featuring rich textures, refined patterns and luxurious finishes.",
-    image: "/images/categories/cushions-banner.webp",
+      "Handcrafted cushions with rich textures, refined patterns and luxurious finishes.",
+    image: "/images/categories/cushion.jpg",
     buttonText: "Explore Cushions",
     buttonLink: "/categories/cushions",
   },
 
   {
-    id: "table-linen",
+    id: "table-runners",
     eyebrow: "DINING",
     title: "Table Linen",
     highlight: "Crafted for Gatherings",
     description:
-      "Elevate dining spaces with sophisticated table runners, napkins and linens created for beautiful everyday moments.",
-    image: "/images/categories/table-linen-banner.webp",
+      "Sophisticated table runners, napkins and linens for beautiful everyday moments.",
+    image: "/images/categories/table-linen.jpg",
     buttonText: "Explore Table Linen",
-    buttonLink: "/categories/table-linen",
+    buttonLink: "/categories/table-runners",
   },
 
   {
@@ -47,8 +47,8 @@ const categorySections = [
     title: "Duvet Covers",
     highlight: "Elegant Layers",
     description:
-      "Discover premium duvet covers designed with expressive prints, soft fabrics and effortless luxury for modern interiors.",
-    image: "/images/categories/duvet-banner.webp",
+      "Premium duvet covers with expressive prints, soft fabrics and effortless luxury.",
+    image: "/images/categories/duvet-cover.jpg",
     buttonText: "Explore Duvet Covers",
     buttonLink: "/categories/duvet-covers",
   },
@@ -59,27 +59,14 @@ const categorySections = [
     title: "Curtains & Drapes",
     highlight: "Frame Your Space",
     description:
-      "Transform interiors with beautifully crafted curtains and drapes that balance natural textures, elegant patterns and function.",
-    image: "/images/categories/curtains-banner.webp",
+      "Beautifully crafted curtains and drapes blending texture, elegance and function.",
+    image: "/images/categories/curtain.jpg",
     buttonText: "Explore Curtains",
     buttonLink: "/categories/curtains",
   },
 ];
 
 function ProductCard({ product }) {
-  /*
-   * Product API structure:
-   *
-   * product._id
-   * product.name
-   * product.slug
-   * product.sku
-   * product.category.slug
-   * product.featuredImage
-   * product.variants[0].price
-   * product.isNew
-   */
-
   const productPrice =
     product?.variants?.length > 0
       ? product.variants[0]?.price
@@ -90,9 +77,7 @@ function ProductCard({ product }) {
     product?.gallery?.[0]?.url ||
     "/images/products/product-placeholder.webp";
 
-  const productBadge = product?.isNew
-    ? "NEW"
-    : "";
+  const productBadge = product?.isNew ? "NEW" : "";
 
   return (
     <article className="group min-w-0">
@@ -142,9 +127,9 @@ function ProductCard({ product }) {
           </p>
         )}
 
-        <span className="mt-2 inline-flex bg-[#edf5ed] px-2.5 py-1.5 text-[8px] uppercase tracking-[0.16em] text-[#315b3a]">
+        {/* <span className="mt-2 inline-flex bg-[#edf5ed] px-2.5 py-1.5 text-[8px] uppercase tracking-[0.16em] text-[#315b3a]">
           In Stock
-        </span>
+        </span> */}
       </div>
     </article>
   );
@@ -169,27 +154,10 @@ export default function CategoryShowcase() {
 
   return (
     <section className="bg-white">
-
       {categorySections.map((section, index) => {
-
         /*
-         * ==============================
          * Dynamic Category Products
-         * ==============================
-         *
-         * section.id:
-         * bedsheets
-         * cushions
-         * table-linen
-         * duvet-covers
-         * curtains
-         *
-         * API:
-         * product.category.slug
-         *
-         * Take only first 4.
          */
-
         const categoryProducts = products
           .filter(
             (product) =>
@@ -206,14 +174,14 @@ export default function CategoryShowcase() {
                 : "pt-16 lg:pt-20"
             }
           >
-
             {/* ================= BANNER ================= */}
 
-            <div className="grid min-h-[340px] grid-cols-1 lg:grid-cols-[42%_58%]">
+            {/* Exact 50% Image + 50% Content */}
+            <div className="grid min-h-[340px] grid-cols-1 lg:grid-cols-2">
 
-              {/* Image */}
+              {/* ================= IMAGE ================= */}
 
-              <div className="relative order-2 min-h-[300px] overflow-hidden lg:order-1 lg:min-h-[390px]">
+              <div className="relative order-2 min-h-[300px] overflow-hidden lg:order-1 lg:min-h-[350px]">
                 <img
                   src={section.image}
                   alt={section.title}
@@ -223,20 +191,19 @@ export default function CategoryShowcase() {
                 <div className="absolute inset-0 bg-black/10" />
               </div>
 
-              {/* Content */}
+              {/* ================= CONTENT ================= */}
 
-              <div className="order-1 flex items-center bg-[#203529] px-8 py-12 sm:px-12 lg:order-2 lg:px-16">
-                <div className="max-w-[540px]">
+              <div className="order-1 flex items-center bg-[#203529] px-7 py-10 sm:px-10 lg:order-2 lg:px-12 xl:px-14">
+                <div className="max-w-[500px]">
 
-                  <p className="text-[9px] uppercase tracking-[0.38em] text-[#d3a44f]">
+                  <p className="text-[9px] uppercase tracking-[0.35em] text-[#d3a44f]">
                     {section.eyebrow}
                   </p>
 
                   <h2
-                    className="mt-4 text-[38px] font-light leading-[1.05] text-white sm:text-[44px] lg:text-[48px]"
+                    className="mt-4 text-[36px] font-light leading-[1.05] text-white sm:text-[42px] lg:text-[44px]"
                     style={{
-                      fontFamily:
-                        "Cormorant Garamond, serif",
+                      fontFamily: "Cormorant Garamond, serif",
                     }}
                   >
                     {section.title}
@@ -246,13 +213,13 @@ export default function CategoryShowcase() {
                     </span>
                   </h2>
 
-                  <p className="mt-5 max-w-[500px] text-[12px] leading-[1.9] text-white/80">
+                  <p className="mt-4 max-w-[460px] text-[12.5px] leading-[1.75] text-white/80">
                     {section.description}
                   </p>
 
                   <Link
                     to={section.buttonLink}
-                    className="mt-7 inline-flex h-[44px] items-center justify-center bg-[#b8862b] px-7 text-[9px] font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-[#a4741d]"
+                    className="mt-6 inline-flex h-[43px] items-center justify-center bg-[#b8862b] px-6 text-[9px] font-semibold uppercase tracking-[0.17em] text-white transition hover:bg-[#a4741d]"
                   >
                     {section.buttonText}
                   </Link>
@@ -302,7 +269,7 @@ export default function CategoryShowcase() {
               <div className="mt-8 flex justify-center border-t border-[#e7e2da] pt-8">
                 <Link
                   to={section.buttonLink}
-                  className="border border-[#222] px-7 py-3 text-[9px] font-semibold uppercase tracking-[0.2em] text-[#222] transition hover:bg-[#222] hover:text-white"
+                  className="border border-[#222] px-7 py-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#222] transition hover:bg-[#222] hover:text-white"
                 >
                   View All His Masterpiece{" "}
                   {section.title} →

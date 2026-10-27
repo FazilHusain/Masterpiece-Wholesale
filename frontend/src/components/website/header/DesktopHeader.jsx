@@ -14,38 +14,26 @@ import { fetchWebsiteProducts } from "../../../redux/websiteProduct/websiteProdu
 import { fetchWebsiteSettings } from "../../../redux/websiteSetting/websiteSettingThunk";
 
 const navigation = [
-  {
-    label: "Collections",
-    path: "/collections",
-    megaMenu: true,
-  },
-  {
-    label: "Products",
-    path: "/products",
-    megaMenu: true,
-  },
-  {
-    label: "Categories",
-    path: "/categories",
-    megaMenu: true,
-  },
-  {
-    label: "About",
-    path: "/about",
-  },
-  {
-    label: "Journal",
-    path: "/journal",
-  },
-  {
-    label: "Wholesale",
-    path: "/wholesale",
-  },
-  {
-    label: "Contact",
-    path: "/contact",
-  },
+  { label: "About", path: "/about" },
+  { label: "Journal", path: "/journal" },
+  { label: "Wholesale", path: "/wholesale" },
+  { label: "Contact", path: "/contact" },
 ];
+const preferredCategories = ["bed linen", "bedsheet", "bed sheet", "table runner", "cushion", "curtain", "table linen", "bedding"];
+const norm = (v) => String(v || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+const linked = (item, key, target) => {
+  const values = [item?.[key], ...(Array.isArray(item?.[`${key}s`]) ? item[`${key}s`] : [])];
+  return values.some(v => String(v?._id || v?.id || v || "") === String(target?._id || target?.id || target || ""));
+};
+const asArray = (value) => Array.isArray(value) ? value : [];
+const refId = (value) => String(value?._id || value?.id || value || "");
+const belongsTo = (item, field, id) => refId(item?.[field]) === refId(id);
+const imageOf = (item) => {
+  const image = item?.image || item?.featuredImage || item?.thumbnail || item?.gallery?.[0];
+  return typeof image === "string" ? image : image?.url || image?.secure_url || "";
+};
+const categoryUrl = (item) => `/categories/${item.slug}`;
+const productUrl = (item) => `/products/${item.slug}`;
 
 export default function DesktopHeader({ onSearchOpen }) {
   const [sticky, setSticky] = useState(false);
@@ -61,6 +49,17 @@ export default function DesktopHeader({ onSearchOpen }) {
   const { categories } = useSelector((state) => state.websiteCategory);
 
   const { products } = useSelector((state) => state.websiteProduct);
+
+  const menuCollections = asArray(collections);
+  const menuCategories = asArray(categories);
+  const menuProducts = asArray(products);
+  // Preferred names are display priorities, NOT verified sales rankings.
+  const topCategories = [...menuCategories].sort((a, b) => {
+    const rank = (c) => { const i = preferredCategories.findIndex(x => norm(c.name).includes(norm(x))); return i < 0 ? 999 : i; };
+    return rank(a) - rank(b);
+  }).slice(0, 5);
+  const menuItems = [...topCategories.map(category => ({ label: category.name, path: categoryUrl(category), megaMenu: true, category })), ...navigation];
+
 
   const { settings } = useSelector((state) => state.websiteSetting); // 👈 ADD
 
@@ -142,7 +141,7 @@ export default function DesktopHeader({ onSearchOpen }) {
               <img
                 src={logo}
                 alt="His Masterpiece"
-                className="h-16 w-16 rounded-full object-cover border border-[#e7dfd2]"
+                className="h-18 w-18 rounded-full object-cover border border-[#e7dfd2]"
               />
 
               <div className="leading-tight">
@@ -251,7 +250,7 @@ hover:bg-[#b38b59] text-white px-6 py-3 font-semibold transition-all duration-30
           <nav className="relative border-t border-gray-100">
             <div className="max-w-7xl mx-auto">
               <ul className="flex justify-center items-center gap-8 h-[48px]">
-                {navigation.map((item) => (
+                {menuItems.map((item) => (
                   <li
                     key={item.label}
                     className="static"
@@ -284,47 +283,31 @@ hover:bg-[#b38b59] text-white px-6 py-3 font-semibold transition-all duration-30
                     </NavLink>
 
                     {item.megaMenu && activeMega === item.label && (
-                      <div className="absolute top-full left-1/2 z-50 mt-3 -translate-x-1/2">
-                        <div className="w-[440px] overflow-hidden rounded-2xl border border-[#ece7df] bg-white shadow-[0_18px_45px_rgba(0,0,0,0.08)]">
-                          {/* Header */}
-                          <div className="border-b border-[#f2ede7] px-5 py-3">
-                            <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#666]">
-                              {item.label}
-                            </h3>
+                      <div className="absolute left-0 top-full z-50 w-full pt-0" onMouseEnter={() => openMega(item.label)} onMouseLeave={closeMega}>
+                        <div className="mx-auto max-h-[min(72vh,620px)] max-w-[1440px] overflow-y-auto border border-[#e9e4dc] bg-white p-5 shadow-[0_22px_45px_rgba(0,0,0,0.12)]">
+                          <div className="mb-4 flex items-center justify-between border-b border-[#eee] pb-3">
+                            <h3 className="text-sm font-semibold uppercase tracking-widest">{item.label}</h3>
+                            <Link to={item.path} onClick={() => setActiveMega(null)} className="text-xs text-[#9d7748]">View category →</Link>
                           </div>
-
-                          {/* Menu */}
-                          <div className="grid grid-cols-2 gap-x-3 gap-y-1 p-3">
-                            {(item.label === "Collections"
-                              ? collections
-                              : item.label === "Categories"
-                                ? categories
-                                : products.slice(0, 10)
-                            ).map((data) => (
-                              <Link
-                                key={data._id}
-                                to={`${item.path}/${data.slug}`}
-                                className="group flex items-center justify-between rounded-lg px-3 py-2 text-[12px] font-medium text-[#444] transition-all duration-200 hover:bg-[#faf7f2] hover:text-[#9d7748]"
-                              >
-                                <span className="truncate">{data.name}</span>
-
-                                <ChevronRight
-                                  size={13}
-                                  className="opacity-0 transition-all duration-200 group-hover:translate-x-1 group-hover:opacity-100"
-                                />
-                              </Link>
-                            ))}
+                          <div className="grid grid-cols-2 gap-5 md:grid-cols-3 xl:grid-cols-5">
+                            {menuCollections.map((collection) => {
+                              const cats = menuCategories.filter(cat => linked(cat, "collection", collection) || linked(collection, "category", cat));
+                              const relatedCats = cats.filter(cat => refId(cat) === refId(item.category));
+                              const relatedProducts = menuProducts.filter(product => linked(product, "collection", collection) && (linked(product, "category", item.category) || relatedCats.some(cat => linked(product, "category", cat))));
+                              if (!relatedCats.length && !relatedProducts.length) return null;
+                              return <section key={collection._id} className="min-w-0 border-r border-[#eee] pr-3 last:border-0">
+                                <Link to={`/collections/${collection.slug}`} onClick={() => setActiveMega(null)} className="mb-2 block text-[11px] font-bold uppercase tracking-wide">{collection.name}</Link>
+                                {imageOf(collection) && <Link to={`/collections/${collection.slug}`} onClick={() => setActiveMega(null)}><img src={imageOf(collection)} alt={collection.name} className="mb-3 h-28 w-full object-cover" loading="lazy" /></Link>}
+                                {relatedCats.map(cat => <div key={cat._id} className="mb-3">
+                                  <Link to={categoryUrl(cat)} onClick={() => setActiveMega(null)} className="block text-xs font-semibold text-[#343434]">{cat.name}</Link>
+                                  {imageOf(cat) && <Link to={categoryUrl(cat)} onClick={() => setActiveMega(null)}><img src={imageOf(cat)} alt={cat.name} loading="lazy" className="my-2 h-20 w-full object-cover" /></Link>}
+                                </div>)}
+                                <div className="space-y-1">{relatedProducts.slice(0, 6).map(product => <Link key={product._id} to={productUrl(product)} onClick={() => setActiveMega(null)} className="block truncate text-[11px] text-[#666] hover:text-[#9d7748]">{product.name}</Link>)}</div>
+                              </section>;
+                            })}
                           </div>
-
-                          {/* Footer */}
-                          <div className="border-t border-[#f2ede7] px-4 py-3">
-                            <Link
-                              to={item.path}
-                              className="flex items-center justify-center rounded-lg border border-[#d8c6a8] py-2 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#9d7748] transition-all hover:bg-[#9d7748] hover:text-white"
-                            >
-                              View All
-                            </Link>
-                          </div>
+                          {!menuCollections.some(collection => menuCategories.some(cat => refId(cat) === refId(item.category) && (linked(cat, "collection", collection) || linked(collection, "category", cat))) || menuProducts.some(product => linked(product, "collection", collection) && linked(product, "category", item.category))) && <p className="py-6 text-sm text-gray-500">No linked collections found for this category.</p>}
+                          <div className="mt-4 border-t border-[#eee] pt-3 text-right"><Link to={item.path} onClick={() => setActiveMega(null)} className="text-xs font-semibold text-[#9d7748]">Explore category →</Link></div>
                         </div>
                       </div>
                     )}

@@ -103,7 +103,7 @@ const ContactForm = () => {
                 fontFamily: "Cormorant Garamond, serif",
               }}
             >
-              Write to{" "}
+              Partner With{" "}
               <span className="italic text-[#111]">
                 Us
               </span>
@@ -300,7 +300,7 @@ const ContactForm = () => {
               />
 
               {/* Studio */}
-              <ContactItem
+              {/* <ContactItem
                 icon={
                   <svg
                     width="16"
@@ -316,21 +316,21 @@ const ContactForm = () => {
                 }
                 title="DESIGN STUDIO"
                 value="Design Studio, Delhi NCR, India"
-              />
+              /> */}
 
             </div>
 
             {/* Wholesale CTA */}
             <div className="mt-7 bg-[#183824] px-7 py-7">
 
-              <h3
+              {/* <h3
                 className="text-[24px] font-normal leading-tight text-white"
                 style={{
                   fontFamily: "Cormorant Garamond, serif",
                 }}
               >
                 Apply for Wholesale Access
-              </h3>
+              </h3> */}
 
               <p className="mt-3 max-w-md text-[11px] leading-6 text-white/70">
                 Ready to stock His Masterpiece? Complete our trade

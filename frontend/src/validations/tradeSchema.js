@@ -37,5 +37,7 @@ export const tradeSchema = z.object({
 
   categoriesInterested: z.array(z.any()).optional(),
 
+  orderItems: z.string().optional(),
+
   message: z.string().optional(),
 });

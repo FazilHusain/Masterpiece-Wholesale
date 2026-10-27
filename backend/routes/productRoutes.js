@@ -17,6 +17,7 @@ import reorderGallery from "../controllers/product/reorderGallery.js";
 
 import searchProducts from "../controllers/website/product/searchProducts.js";
 import uploadStoryImage from "../controllers/product/uploadStoryImage.js";
+import uploadVideo from "../controllers/product/uploadVideo.js";
 
 const router = express.Router();
 
@@ -76,6 +77,17 @@ router.post(
   protect,
   upload.array("images", 10),
   uploadGalleryImages,
+);
+
+// =============================
+// PRODUCT VIDEO
+// =============================
+
+router.post(
+  "/:id/video",
+  protect,
+  upload.single("video"),
+  uploadVideo,
 );
 
 router.post(

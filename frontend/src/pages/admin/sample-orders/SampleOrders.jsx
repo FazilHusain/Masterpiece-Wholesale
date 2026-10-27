@@ -1,158 +1,154 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 import PageHeader from "../../../components/common/PageHeader";
-import { Card, Input, Select } from "../../../components/ui";
+import { Card, Input, Select, DeleteModal } from "../../../components/ui";
+import Pagination from "../../../components/ui/Pagination";
 
 import SampleOrderTable from "./SampleOrderTable";
-import Pagination from "../../../components/ui/Pagination";
-import { DeleteModal } from "../../../components/ui";
 
 import {
   fetchSampleOrders,
   deleteSampleOrder,
 } from "../../../redux/sampleOrder";
-import toast from "react-hot-toast";
 
 export default function SampleOrders() {
   const dispatch = useDispatch();
 
   const { orders, loading, pagination } = useSelector(
-    (state) => state.sampleOrder,
+    (state) => state.sampleOrder
   );
-  console.log("ORDERS FROM REDUX:", orders);
-  console.log("PAGINATION:", pagination);
 
   const [search, setSearch] = useState("");
+  const [searchValue, setSearchValue] = useState("");
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
 
-  const [searchValue, setSearchValue] = useState("");
   const [deleteModal, setDeleteModal] = useState(false);
-
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
+  // Debounced search
   useEffect(() => {
     const timer = setTimeout(() => {
-      setSearch(searchValue);
+      setSearch(searchValue.trim());
     }, 300);
 
     return () => clearTimeout(timer);
   }, [searchValue]);
 
+  // Reset pagination when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [search, status]);
+
+  // Fetch orders
   useEffect(() => {
     dispatch(
       fetchSampleOrders({
         page,
         search,
         status,
-      }),
-    )
-      .unwrap()
-      .then((response) => {
-        console.log("SAMPLE ORDERS API RESPONSE:", response);
       })
-      .catch((error) => {
-        console.error("SAMPLE ORDERS API ERROR:", error);
-      });
+    );
   }, [dispatch, page, search, status]);
 
-  useEffect(() => {
-    setPage(1);
-  }, [search, status]);
-
   const handleDelete = async () => {
-    if (!selectedOrder) return;
+    if (!selectedOrder?._id || deleting) return;
 
     try {
-      await dispatch(deleteSampleOrder(selectedOrder._id)).unwrap();
+      setDeleting(true);
+
+      await dispatch(
+        deleteSampleOrder(selectedOrder._id)
+      ).unwrap();
 
       toast.success("Sample order deleted successfully.");
 
       setDeleteModal(false);
       setSelectedOrder(null);
 
-      dispatch(
+      // Refresh current list
+      await dispatch(
         fetchSampleOrders({
           page,
           search,
           status,
-        }),
-      );
+        })
+      ).unwrap();
     } catch (error) {
-      toast.error(error?.message || "Failed to delete sample order.");
+      toast.error(
+        error?.message ||
+          error?.data?.message ||
+          "Failed to delete sample order."
+      );
+    } finally {
+      setDeleting(false);
     }
+  };
+
+  const handleStatusChange = (value) => {
+    setStatus(value?.target ? value.target.value : value);
   };
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Sample Orders" subtitle="Manage all sample orders." />
+      <PageHeader
+        title="Sample Orders"
+        subtitle="Manage all sample orders."
+      />
 
       <Card>
         <div className="mb-6 grid gap-4 md:grid-cols-2">
           <Input
-            placeholder="Search by Order No, Customer, Product or Email..."
+            placeholder="Search by Order No, Customer or Email..."
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
           />
 
           <Select
             value={status}
-            onChange={(e) => setStatus(e.target.value)}
+            onChange={handleStatusChange}
             options={[
-              {
-                label: "All Status",
-                value: "",
-              },
-              {
-                label: "Pending",
-                value: "Pending",
-              },
-              {
-                label: "Approved",
-                value: "Approved",
-              },
-              {
-                label: "Rejected",
-                value: "Rejected",
-              },
-              {
-                label: "Packed",
-                value: "Packed",
-              },
-              {
-                label: "Shipped",
-                value: "Shipped",
-              },
-              {
-                label: "Delivered",
-                value: "Delivered",
-              },
+              { label: "All Status", value: "" },
+              { label: "Pending", value: "Pending" },
+              { label: "Approved", value: "Approved" },
+              { label: "Rejected", value: "Rejected" },
+              { label: "Packed", value: "Packed" },
+              { label: "Shipped", value: "Shipped" },
+              { label: "Delivered", value: "Delivered" },
             ]}
           />
         </div>
 
         <SampleOrderTable
-          orders={orders}
+          orders={orders || []}
           loading={loading}
-          onDelete={(row) => {
-            setSelectedOrder(row);
-
+          onDelete={(order) => {
+            setSelectedOrder(order);
             setDeleteModal(true);
           }}
         />
+
         {pagination?.totalPages > 1 && (
           <Pagination
-            currentPage={pagination?.currentPage || 1}
-            totalPages={pagination?.totalPages || 1}
+            currentPage={pagination.currentPage || 1}
+            totalPages={pagination.totalPages || 1}
             onPageChange={setPage}
           />
         )}
       </Card>
+
       <DeleteModal
         open={deleteModal}
-        onClose={() => setDeleteModal(false)}
-        loading={loading}
+        onClose={() => {
+          if (!deleting) {
+            setDeleteModal(false);
+            setSelectedOrder(null);
+          }
+        }}
+        loading={deleting}
         onConfirm={handleDelete}
         title="Delete Sample Order"
         description="This action cannot be undone."

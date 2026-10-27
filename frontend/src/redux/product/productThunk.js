@@ -87,6 +87,29 @@ export const uploadGalleryImages = createAsyncThunk(
   },
 );
 
+
+// =============================
+// UPLOAD PRODUCT VIDEO
+// =============================
+
+export const uploadProductVideo = createAsyncThunk(
+  "product/uploadProductVideo",
+  async ({ id, file, title }, thunkAPI) => {
+    try {
+      return await productService.uploadProductVideo(
+        id,
+        file,
+        title,
+      );
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message ||
+          "Failed to upload product video",
+      );
+    }
+  },
+);
+
 // =============================
 // UPLOAD STORY IMAGE
 // =============================

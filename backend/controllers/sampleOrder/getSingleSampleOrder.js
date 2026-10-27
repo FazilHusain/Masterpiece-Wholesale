@@ -7,6 +7,7 @@ const getSingleSampleOrder = async (req, res, next) => {
   try {
     const order = await SampleOrder.findById(req.params.id)
       .populate("product", "name sku featuredImage")
+      .populate("items.product", "name sku featuredImage")
       .populate("reviewedBy", "firstName lastName email")
 
       .populate(

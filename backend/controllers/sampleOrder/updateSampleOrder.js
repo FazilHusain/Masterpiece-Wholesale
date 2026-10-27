@@ -1,25 +1,13 @@
 import SampleOrder from "../../models/SampleOrder.js";
-
 import ApiError from "../../utils/ApiError.js";
 import ApiResponse from "../../utils/ApiResponse.js";
 
-const updateSampleOrder = async (
-  req,
-  res,
-  next
-) => {
+const updateSampleOrder = async (req, res, next) => {
   try {
-    const order = await SampleOrder.findById(
-      req.params.id
-    );
+    const order = await SampleOrder.findById(req.params.id);
 
     if (!order) {
-      return next(
-        new ApiError(
-          404,
-          "Sample order not found."
-        )
-      );
+      return next(new ApiError(404, "Sample order not found."));
     }
 
     const {
@@ -28,65 +16,58 @@ const updateSampleOrder = async (
       email,
       phone,
       country,
-
-      product,
-      variant,
-      sku,
-      quantity,
-
       shippingAddress,
       city,
       state,
       postalCode,
-
       message,
+      adminNote,
+      status,
     } = req.body;
 
-    order.customerName =
-      customerName ?? order.customerName;
+    // Customer details
+    order.customerName = customerName ?? order.customerName;
+    order.companyName = companyName ?? order.companyName;
+    order.email = email ?? order.email;
+    order.phone = phone ?? order.phone;
+    order.country = country ?? order.country;
 
-    order.companyName =
-      companyName ?? order.companyName;
-
-    order.email =
-      email ?? order.email;
-
-    order.phone =
-      phone ?? order.phone;
-
-    order.country =
-      country ?? order.country;
-
-    order.product =
-      product ?? order.product;
-
-    order.variant =
-      variant ?? order.variant;
-
-    order.sku =
-      sku ?? order.sku;
-
-    order.quantity =
-      quantity ?? order.quantity;
-
+    // Shipping details
     order.shippingAddress =
-      shippingAddress ??
-      order.shippingAddress;
+      shippingAddress ?? order.shippingAddress;
+    order.city = city ?? order.city;
+    order.state = state ?? order.state;
+    order.postalCode = postalCode ?? order.postalCode;
 
-    order.city =
-      city ?? order.city;
+    // Customer message and admin note
+    order.message = message ?? order.message;
+    order.adminNote = adminNote ?? order.adminNote;
 
-    order.state =
-      state ?? order.state;
+    // Validate status before updating
+    if (status !== undefined) {
+      const allowedStatuses = [
+        "Pending",
+        "Approved",
+        "Rejected",
+        "Packed",
+        "Shipped",
+        "Delivered",
+      ];
 
-    order.postalCode =
-      postalCode ??
-      order.postalCode;
+      if (!allowedStatuses.includes(status)) {
+        return next(
+          new ApiError(400, "Invalid sample order status.")
+        );
+      }
 
-    order.message =
-      message ?? order.message;
+      order.status = status;
+    }
 
-    order.reviewedBy = req.admin._id;
+    // Keep existing product/items and payment data unchanged.
+    if (req.admin?._id) {
+      order.reviewedBy = req.admin._id;
+    }
+
     order.reviewedAt = new Date();
 
     await order.save();

@@ -101,7 +101,7 @@ export default function FeaturedStory({ story }) {
               {/* Description */}
 
               {story.shortDescription && (
-                <p className="mt-4 max-w-xl text-[12px] leading-6 text-[#5C5C5C]">
+                <p className="mt-4 max-w-xl text-[13px] leading-6 text-[#5C5C5C]">
                   {story.shortDescription}
                 </p>
               )}

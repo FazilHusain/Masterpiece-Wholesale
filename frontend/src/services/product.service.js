@@ -136,6 +136,30 @@ const uploadGalleryImages = async (id, files = []) => {
   return data;
 };
 
+
+// =============================
+// UPLOAD PRODUCT VIDEO
+// =============================
+
+const uploadProductVideo = async (productId, file, title = "") => {
+  const formData = new FormData();
+
+  if (file instanceof File) {
+    formData.append("video", file);
+  }
+
+  if (title) {
+    formData.append("title", title);
+  }
+
+  const { data } = await api.post(
+    `${BASE_URL}/${productId}/video`,
+    formData,
+  );
+
+  return data;
+};
+
 // =============================
 // UPLOAD STORY IMAGE
 // =============================
@@ -207,6 +231,7 @@ const productService = {
 
   deleteProduct,
   uploadStoryImage,
+  uploadProductVideo
 };
 
 export default productService;

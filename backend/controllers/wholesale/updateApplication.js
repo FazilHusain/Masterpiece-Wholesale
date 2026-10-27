@@ -17,6 +17,7 @@ const updateApplication = async (req, res, next) => {
       "categoriesInterested",
       "annualPurchase",
       "message",
+      "orderItems",
     ];
 
     allowedFields.forEach((field) => {

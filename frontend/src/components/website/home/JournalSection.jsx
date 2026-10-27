@@ -133,7 +133,7 @@ export default function JournalSection() {
                   {/* Description */}
 
                   {item.shortDescription && (
-                    <p className="mt-2.5 line-clamp-2 text-[12px] leading-5 text-[#6B6259]">
+                    <p className="mt-2.5 line-clamp-2 text-[13px] leading-5 text-[#6B6259]">
                       {item.shortDescription}
                     </p>
                   )}

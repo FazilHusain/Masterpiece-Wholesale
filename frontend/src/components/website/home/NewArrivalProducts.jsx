@@ -56,7 +56,7 @@ export default function NewArrivalProducts() {
                   border-[#222]
                   px-7
                   py-3
-                  text-[9px]
+                  text-[10px]
                   font-semibold
                   uppercase
                   tracking-[0.2em]

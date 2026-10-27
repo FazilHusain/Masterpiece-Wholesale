@@ -26,21 +26,38 @@ export default function GallerySection({ formData, setFormData, productId }) {
   // DELETE EXISTING GALLERY IMAGE
   // ==========================================
 
-  const handleDeleteGalleryImage = async (imageId) => {
-    if (!productId || !imageId) {
-      toast.error("Product ID or image ID is missing.");
-      console.log("Gallery delete IDs:", {
-        productId,
-        imageId,
-      });
-      return;
-    }
+  const handleDeleteGalleryImage = async (image, index) => {
+    const imageId =
+      typeof image === "object" && image?._id ? image._id : null;
 
     const confirmed = window.confirm(
       "Are you sure you want to delete this image?",
     );
 
     if (!confirmed) return;
+
+    // ==========================================
+    // CREATE MODE / NEWLY SELECTED IMAGE
+    // Remove only from local form state.
+    // Nothing has been uploaded to the server yet.
+    // ==========================================
+
+    if (!productId || !imageId) {
+      setFormData((prev) => ({
+        ...prev,
+        gallery: (prev.gallery || []).filter(
+          (_, imageIndex) => imageIndex !== index,
+        ),
+      }));
+
+      toast.success("Gallery image removed.");
+      return;
+    }
+
+    // ==========================================
+    // EDIT MODE / EXISTING SERVER IMAGE
+    // Delete from server first, then local UI.
+    // ==========================================
 
     try {
       await dispatch(
@@ -50,15 +67,13 @@ export default function GallerySection({ formData, setFormData, productId }) {
         }),
       ).unwrap();
 
-      // Remove ONLY deleted image from local UI
       setFormData((prev) => ({
         ...prev,
         gallery: (prev.gallery || []).filter(
-          (image) => image?._id?.toString() !== imageId?.toString(),
+          (galleryImage) =>
+            galleryImage?._id?.toString() !== imageId?.toString(),
         ),
       }));
-
-      toast.success("Gallery image deleted.");
 
       toast.success("Gallery image deleted successfully.");
     } catch (error) {
@@ -138,16 +153,17 @@ export default function GallerySection({ formData, setFormData, productId }) {
 
                   {/* DELETE */}
 
-                  {imageId && productId && (
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteGalleryImage(imageId)}
-                      className="absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-full bg-red-600 text-white opacity-0 shadow-lg transition-all duration-200 group-hover:opacity-100 hover:bg-red-700"
-                      title="Delete image"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteGalleryImage(image, index)}
+                    className="absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-full bg-red-600 text-white opacity-0 shadow-lg transition-all duration-200 group-hover:opacity-100 hover:bg-red-700"
+                    title={imageId && productId ? "Delete image" : "Remove image"}
+                    aria-label={
+                      imageId && productId ? "Delete image" : "Remove image"
+                    }
+                  >
+                    <Trash2 size={16} />
+                  </button>
                 </div>
               );
             })}

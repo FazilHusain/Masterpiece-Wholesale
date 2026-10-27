@@ -260,6 +260,12 @@ const productSchema = new mongoose.Schema(
       default: "",
     },
 
+    hsCode: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
     countryOfOrigin: {
       type: String,
       default: "India",

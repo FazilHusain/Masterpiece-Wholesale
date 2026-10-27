@@ -1,6 +1,7 @@
 const ProductSpecificationTable = ({ product }) => {
   const specifications = [
     { label: "SKU", value: product?.sku },
+    { label: "HS Code", value: product?.hsCode },
     { label: "Material", value: product?.material },
     { label: "Pattern", value: product?.pattern },
     { label: "Color Family", value: product?.colorFamily },
@@ -14,7 +15,6 @@ const ProductSpecificationTable = ({ product }) => {
   return (
     <section className="bg-white py-14 sm:py-16 lg:py-18">
       <div className="mx-auto max-w-5xl px-6 lg:px-8">
-
         {/* Heading */}
         <div className="mb-8">
           <p className="text-[9px] font-medium uppercase tracking-[0.4em] text-[#B68C2F]">
@@ -47,7 +47,6 @@ const ProductSpecificationTable = ({ product }) => {
             </div>
           ))}
         </div>
-
       </div>
     </section>
   );

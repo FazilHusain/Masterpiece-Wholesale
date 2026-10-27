@@ -1,12 +1,9 @@
 import SampleOrder from "../../models/SampleOrder.js";
+import Product from "../../models/Product.js";
 
 import ApiResponse from "../../utils/ApiResponse.js";
 
-const getSampleOrders = async (
-  req,
-  res,
-  next
-) => {
+const getSampleOrders = async (req, res, next) => {
   try {
     const {
       page = 1,
@@ -15,64 +12,62 @@ const getSampleOrders = async (
       status = "",
     } = req.query;
 
+    const currentPage = Math.max(1, Number(page) || 1);
+    const pageSize = Math.min(100, Math.max(1, Number(limit) || 10));
+
     const query = {};
 
     if (status) {
       query.status = status;
     }
 
-    if (search) {
-      query.$or = [
-        {
-          customerName: {
-            $regex: search,
-            $options: "i",
-          },
-        },
-        {
-          companyName: {
-            $regex: search,
-            $options: "i",
-          },
-        },
-        {
-          email: {
-            $regex: search,
-            $options: "i",
-          },
-        },
-        {
-          phone: {
-            $regex: search,
-            $options: "i",
-          },
-        },
-        {
-          orderNumber: {
-            $regex: search,
-            $options: "i",
-          },
-        },
+    const searchText = String(search).trim();
+
+    if (searchText) {
+      const escapedSearch = searchText.replace(
+        /[.*+?^${}()|[\]\\]/g,
+        "\\$&"
+      );
+
+      const regex = new RegExp(escapedSearch, "i");
+
+      // Search products by name or SKU
+      const matchingProducts = await Product.find({
+        $or: [
+          { name: regex },
+          { sku: regex },
+        ],
+      }).select("_id");
+
+      const productIds = matchingProducts.map((product) => product._id);
+
+      const searchConditions = [
+        { customerName: regex },
+        { companyName: regex },
+        { email: regex },
+        { phone: regex },
+        { orderNumber: regex },
       ];
+
+      if (productIds.length > 0) {
+        searchConditions.push(
+          { product: { $in: productIds } },
+          { "items.product": { $in: productIds } }
+        );
+      }
+
+      query.$or = searchConditions;
     }
 
-    const total =
-      await SampleOrder.countDocuments(query);
+    const total = await SampleOrder.countDocuments(query);
 
     const orders = await SampleOrder.find(query)
-      .populate(
-        "product",
-        "name sku featuredImage"
-      )
-      .populate(
-        "reviewedBy",
-        "firstName lastName"
-      )
-      .sort({
-        createdAt: -1,
-      })
-      .skip((Number(page) - 1) * Number(limit))
-      .limit(Number(limit));
+      .populate("product", "name sku featuredImage")
+      .populate("items.product", "name sku featuredImage")
+      .populate("reviewedBy", "firstName lastName")
+      .sort({ createdAt: -1 })
+      .skip((currentPage - 1) * pageSize)
+      .limit(pageSize);
 
     return res.status(200).json(
       new ApiResponse(
@@ -80,12 +75,10 @@ const getSampleOrders = async (
         {
           orders,
           pagination: {
-            currentPage: Number(page),
-            totalPages: Math.ceil(
-              total / Number(limit)
-            ),
+            currentPage,
+            totalPages: Math.ceil(total / pageSize),
             totalItems: total,
-            limit: Number(limit),
+            limit: pageSize,
           },
         },
         "Sample orders fetched successfully."

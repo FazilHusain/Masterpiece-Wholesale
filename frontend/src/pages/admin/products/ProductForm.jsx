@@ -66,6 +66,7 @@ export default function ProductForm({
     material: "",
     pattern: "",
     colorFamily: "",
+    hsCode: "",
     countryOfOrigin: "India",
     leadTime: "",
     careInstructions: "",

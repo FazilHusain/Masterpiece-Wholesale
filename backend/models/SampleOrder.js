@@ -1,5 +1,45 @@
 import mongoose from "mongoose";
 
+const sampleOrderItemSchema = new mongoose.Schema(
+  {
+    product: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+      required: true,
+    },
+
+    variant: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
+    },
+
+    sku: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    quantity: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
+
+    samplePrice: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+
+    total: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+  },
+  { _id: false },
+);
+
 const sampleOrderSchema = new mongoose.Schema(
   {
     /* ORDER */
@@ -40,6 +80,13 @@ const sampleOrderSchema = new mongoose.Schema(
     country: {
       type: String,
       default: "",
+    },
+
+    /* SAMPLE ITEMS */
+
+    items: {
+      type: [sampleOrderItemSchema],
+      default: [],
     },
 
     /* PRODUCT */

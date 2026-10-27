@@ -8,15 +8,14 @@ const getMySampleOrders = async (req, res, next) => {
       tradeUser: req.user._id,
     })
       .populate("product", "name sku featuredImage")
+      .populate("items.product", "name sku featuredImage")
       .sort({ createdAt: -1 });
 
-    return res.status(200).json(
-      new ApiResponse(
-        200,
-        orders,
-        "My sample orders fetched successfully."
-      )
-    );
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, orders, "My sample orders fetched successfully."),
+      );
   } catch (error) {
     next(error);
   }

@@ -22,6 +22,7 @@ const createApplication = async (req, res, next) => {
       state,
       country,
       categoriesInterested,
+      orderItems,
       annualPurchase,
       website,
       yearsInBusiness,
@@ -58,6 +59,7 @@ const createApplication = async (req, res, next) => {
     annualPurchase = annualPurchase || "";
     message = message?.trim() || "";
     categoriesInterested = categoriesInterested || [];
+    orderItems = message?.trim() || "";
 
     // Duplicate Check
     const alreadyExists = await WholesaleApplication.findOne({
@@ -98,6 +100,8 @@ const createApplication = async (req, res, next) => {
       country,
 
       categoriesInterested,
+
+      orderItems,
 
       annualPurchase,
       website,

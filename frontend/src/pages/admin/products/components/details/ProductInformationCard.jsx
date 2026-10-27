@@ -27,6 +27,11 @@ export default function ProductInformationCard({
         />
 
         <DetailItem
+          label="HS Code"
+          value={product?.hsCode}
+        />
+
+        <DetailItem
           label="Country of Origin"
           value={product?.countryOfOrigin}
         />

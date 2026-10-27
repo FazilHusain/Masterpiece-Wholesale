@@ -10,6 +10,7 @@ import {
   deleteGalleryImage,
   reorderGallery,
   uploadStoryImage,
+  uploadProductVideo,
 } from "./productThunk";
 
 const initialState = {
@@ -19,6 +20,8 @@ const initialState = {
   loading: false,
 
   galleryLoading: false,
+
+  videoLoading: false,
 
   storyLoading: false,
 
@@ -201,6 +204,39 @@ const productSlice = createSlice({
         item._id === updatedProduct._id ? updatedProduct : item,
       );
     });
+
+    // ==========================================
+    // VIDEO UPLOAD
+    // ==========================================
+
+    builder
+
+      .addCase(uploadProductVideo.pending, (state) => {
+        state.videoLoading = true;
+        state.error = null;
+      })
+
+      .addCase(uploadProductVideo.fulfilled, (state, action) => {
+        state.videoLoading = false;
+
+        const updatedProduct = action.payload?.data;
+
+        if (!updatedProduct) {
+          return;
+        }
+
+        state.product = updatedProduct;
+
+        state.products = state.products.map((item) =>
+          item._id === updatedProduct._id ? updatedProduct : item,
+        );
+      })
+
+      .addCase(uploadProductVideo.rejected, (state, action) => {
+        state.videoLoading = false;
+
+        state.error = action.payload;
+      });
 
     // ==========================================
     // STORY IMAGE UPLOAD

@@ -46,38 +46,18 @@ export default function MobileDrawer({ open, onClose }) {
   if (!open) return null;
 
   const navigation = [
-    {
-      label: "Collections",
-      path: "/collections",
-      megaMenu: true,
-    },
-    {
-      label: "Products",
-      path: "/products",
-      megaMenu: true,
-    },
-    {
-      label: "Categories",
-      path: "/categories",
-      megaMenu: true,
-    },
-    {
-      label: "About",
-      path: "/about",
-    },
-    {
-      label: "Journal",
-      path: "/journal",
-    },
-    {
-      label: "Wholesale",
-      path: "/wholesale",
-    },
-    {
-      label: "Contact",
-      path: "/contact",
-    },
+    { label: "Shop", path: "/collections", megaMenu: true },
+    { label: "About", path: "/about" },
+    { label: "Journal", path: "/journal" },
+    { label: "Wholesale", path: "/wholesale" },
+    { label: "Contact", path: "/contact" },
   ];
+  const refId = (v) => String(v?._id || v?.id || v || "");
+  const allCollections = Array.isArray(collections) ? collections : [];
+  const allCategories = Array.isArray(categories) ? categories : [];
+  const allProducts = Array.isArray(products) ? products : [];
+  const [expandedCollection, setExpandedCollection] = useState(null);
+  const [expandedCategory, setExpandedCategory] = useState(null);
 
   const toggleMenu = (label) => {
     setExpanded(expanded === label ? null : label);
@@ -141,22 +121,23 @@ export default function MobileDrawer({ open, onClose }) {
                     {expanded === item.label && (
                       <div className="ml-3 mt-2 border-l border-[#ece7df] pl-4">
 
-                        {(item.label === "Collections"
-                          ? collections
-                          : item.label === "Categories"
-                          ? categories
-                          : products.slice(0, 10)
-                        ).map((data) => (
-                          <Link
-                            key={data._id}
-                            to={`${item.path}/${data.slug}`}
-                            onClick={onClose}
-                            className="flex items-center gap-2 py-2 text-[12px] text-[#555] transition hover:text-[#9d7748]"
-                          >
-                            <ChevronRight size={14} />
-                            {data.name}
-                          </Link>
-                        ))}
+                        {allCollections.map((collection) => {
+                          const relatedCategories = allCategories.filter((cat) => refId(cat.collection) === refId(collection._id) || (Array.isArray(cat.collections) && cat.collections.some((c) => refId(c) === refId(collection._id))));
+                          const directProducts = allProducts.filter((product) => refId(product.collection) === refId(collection._id));
+                          return <div key={collection._id} className="border-b border-[#f1eee9] py-2">
+                            <div className="flex items-center justify-between gap-2">
+                              <Link to={`/collections/${collection.slug}`} onClick={onClose} className="text-xs font-bold uppercase text-[#333]">{collection.name}</Link>
+                              <button type="button" aria-label={`Expand ${collection.name}`} onClick={() => setExpandedCollection(expandedCollection === collection._id ? null : collection._id)} className="p-2"><ChevronDown size={16}/></button>
+                            </div>
+                            {expandedCollection === collection._id && <div className="ml-3 border-l pl-3">
+                              {relatedCategories.map((cat) => <div key={cat._id} className="py-1">
+                                <div className="flex items-center justify-between"><Link to={`/categories/${cat.slug}`} onClick={onClose} className="text-xs font-semibold">{cat.name}</Link><button type="button" onClick={() => setExpandedCategory(expandedCategory === cat._id ? null : cat._id)} className="p-2" aria-label={`Expand ${cat.name}`}><ChevronDown size={14}/></button></div>
+                                {expandedCategory === cat._id && allProducts.filter((product) => refId(product.category) === refId(cat._id) && (refId(product.collection) === refId(collection._id) || !product.collection)).slice(0, 8).map((product) => <Link key={product._id} to={`/products/${product.slug}`} onClick={onClose} className="ml-3 block py-1.5 text-xs text-gray-500">{product.name}</Link>)}
+                              </div>)}
+                              {relatedCategories.length === 0 && directProducts.slice(0, 8).map((product) => <Link key={product._id} to={`/products/${product.slug}`} onClick={onClose} className="block py-1.5 text-xs text-gray-500">{product.name}</Link>)}
+                            </div>}
+                          </div>;
+                        })}
 
                         <Link
                           to={item.path}

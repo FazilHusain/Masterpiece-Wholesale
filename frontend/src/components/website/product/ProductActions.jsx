@@ -1,35 +1,184 @@
-import { useNavigate } from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+
 import toast from "react-hot-toast";
 
-import { getTradeToken } from "../../../services/trade.service";
-
-const ProductActions = ({ product }) => {
+const ProductActions = ({
+  product,
+  selectedVariant,
+  quantity = 1,
+  totalPrice = 0,
+}) => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  /*
+   * =========================================================
+   * TRADE / PUBLIC CONTEXT
+   * =========================================================
+   *
+   * We do NOT use the trade token here.
+   *
+   * A user may have a tradeToken stored in localStorage
+   * while browsing the normal public website.
+   *
+   * Public product page:
+   * /products/...
+   *
+   * Trade product page:
+   * /trade/...
+   *
+   * Therefore route context decides the sample flow.
+   */
+
+  const isTradePage =
+    location.pathname.startsWith("/trade/");
+
+  /*
+   * =========================================================
+   * REQUEST QUOTE
+   * =========================================================
+   */
 
   const handleQuote = () => {
-    navigate(`/contact?product=${product?._id}`);
-  };
-
-  const handleSample = () => {
     if (!product?._id) {
       toast.error("Product not found.");
       return;
     }
 
-    const token = getTradeToken();
+    navigate(
+      `/contact?product=${product._id}`,
+    );
+  };
 
-    if (token) {
-      navigate(`/trade/sample-order/${product.slug}`);
+  /*
+   * =========================================================
+   * ORDER SAMPLE
+   * =========================================================
+   */
+
+  const handleSample = () => {
+    /*
+     * Product validation
+     */
+
+    if (!product?._id) {
+      toast.error("Product not found.");
       return;
     }
 
-    navigate(`/sample-request/${product.slug}`);
+    /*
+     * Variant validation
+     */
+
+    if (!selectedVariant?._id) {
+      toast.error(
+        "Please select a size/variant.",
+      );
+      return;
+    }
+
+    /*
+     * MOQ validation
+     */
+
+    const minimumQuantity =
+      Math.max(
+        Number(selectedVariant.moq) || 1,
+        1,
+      );
+
+    const requestedQuantity =
+      Number(quantity);
+
+    if (
+      !Number.isInteger(requestedQuantity) ||
+      requestedQuantity < minimumQuantity
+    ) {
+      toast.error(
+        `Minimum order quantity is ${minimumQuantity}.`,
+      );
+      return;
+    }
+
+    /*
+     * =======================================================
+     * SAMPLE STATE
+     * =======================================================
+     *
+     * totalPrice is only for frontend display/reference.
+     *
+     * Backend MUST calculate the final amount again from
+     * the selected variant stored in MongoDB.
+     */
+
+    const sampleState = {
+      selectedVariantId:
+        selectedVariant._id,
+
+      quantity:
+        requestedQuantity,
+
+      totalPrice:
+        Number(totalPrice) || 0,
+    };
+
+    /*
+     * =======================================================
+     * ROUTE DECISION
+     * =======================================================
+     *
+     * IMPORTANT:
+     *
+     * We intentionally DO NOT check localStorage
+     * tradeToken here.
+     *
+     * Public website:
+     * /products/:slug
+     *       ↓
+     * /sample-request/:slug
+     *
+     * Trade portal:
+     * /trade/...
+     *       ↓
+     * /trade/sample-order/:slug
+     */
+
+    if (isTradePage) {
+      navigate(
+        `/trade/sample-order/${product.slug}`,
+        {
+          state: sampleState,
+        },
+      );
+
+      return;
+    }
+
+    /*
+     * Public customer sample flow
+     */
+
+    navigate(
+      `/sample-request/${product.slug}`,
+      {
+        state: sampleState,
+      },
+    );
   };
+
+  /*
+   * =========================================================
+   * UI
+   * =========================================================
+   */
 
   return (
     <div className="grid gap-3 sm:grid-cols-2">
+      {/* REQUEST QUOTE */}
 
-      {/* Request Quote */}
       <button
         type="button"
         onClick={handleQuote}
@@ -38,7 +187,8 @@ const ProductActions = ({ product }) => {
         Request Quote
       </button>
 
-      {/* Sample */}
+      {/* ORDER SAMPLE */}
+
       <button
         type="button"
         onClick={handleSample}
@@ -46,7 +196,6 @@ const ProductActions = ({ product }) => {
       >
         Order Sample
       </button>
-
     </div>
   );
 };

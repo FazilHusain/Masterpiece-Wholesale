@@ -27,6 +27,7 @@ export default function SampleOrderForm({
     variant: "",
     sku: "",
     quantity: 1,
+    items: [],
 
     shippingAddress: "",
     city: "",
@@ -41,24 +42,22 @@ export default function SampleOrderForm({
     ...initialValues,
   });
 
-  const [errors, setErrors] =
-    useState({});
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    if (
-      mode === "edit" &&
-      initialValues?._id
-    ) {
+    if (initialValues?._id) {
       setFormData((prev) => ({
         ...prev,
         ...initialValues,
+        items: Array.isArray(initialValues.items)
+          ? initialValues.items
+          : [],
       }));
     }
-  }, [initialValues, mode]);
+  }, [initialValues]);
 
   const handleChange = (e) => {
-    const { name, value } =
-      e.target;
+    const { name, value } = e.target;
 
     setFormData((prev) => ({
       ...prev,
@@ -76,27 +75,21 @@ export default function SampleOrderForm({
   const validate = () => {
     const newErrors = {};
 
-    if (!formData.customerName.trim()) {
-      newErrors.customerName =
-        "Customer name is required.";
+    if (!String(formData.customerName || "").trim()) {
+      newErrors.customerName = "Customer name is required.";
     }
 
-    if (!formData.email.trim()) {
-      newErrors.email =
-        "Email is required.";
+    if (!String(formData.email || "").trim()) {
+      newErrors.email = "Email is required.";
     }
 
-    if (!formData.phone.trim()) {
-      newErrors.phone =
-        "Phone is required.";
+    if (!String(formData.phone || "").trim()) {
+      newErrors.phone = "Phone is required.";
     }
 
     setErrors(newErrors);
 
-    return (
-      Object.keys(newErrors).length ===
-      0
-    );
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
@@ -104,14 +97,30 @@ export default function SampleOrderForm({
 
     if (!validate()) return;
 
-    await onSubmit?.(formData);
+    // Product/items and payment fields remain untouched.
+    // Only send fields handled by updateSampleOrder.js.
+    const payload = {
+      customerName: formData.customerName,
+      companyName: formData.companyName,
+      email: formData.email,
+      phone: formData.phone,
+      country: formData.country,
+
+      shippingAddress: formData.shippingAddress,
+      city: formData.city,
+      state: formData.state,
+      postalCode: formData.postalCode,
+
+      status: formData.status,
+      message: formData.message,
+      adminNote: formData.adminNote,
+    };
+
+    await onSubmit?.(payload);
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-6"
-    >
+    <form onSubmit={handleSubmit} className="space-y-6">
       <CustomerInformation
         formData={formData}
         errors={errors}
@@ -144,11 +153,7 @@ export default function SampleOrderForm({
         <Button
           type="button"
           variant="outline"
-          onClick={() =>
-            navigate(
-              "/admin/sample-orders"
-            )
-          }
+          onClick={() => navigate("/admin/sample-orders")}
         >
           Cancel
         </Button>

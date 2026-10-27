@@ -4,7 +4,7 @@ const banner = {
   title: "Songs Of Spring",
   subtitle: "NEW ARRIVAL • LATEST COLLECTION",
   description:
-    "Build your spring inventory with our newest collection featuring botanical florals, artisan craftsmanship and premium home textiles for retailers worldwide.",
+  "Explore botanical florals, artisan craftsmanship and premium home textiles.",
   desktopImage: "/images/hero/newarrival.webp",
   mobileImage: "/images/hero/newarrival.webp",
   buttonText: "Shop New Arrivals",
@@ -15,9 +15,10 @@ const banner = {
 
 export default function NewArrivalBanner() {
   return (
-    <section className="w-full bg-white py-10 lg:py-12">
+    <section className="w-full bg-white py-8 lg:py-10">
       <div className="w-full overflow-hidden">
-        <div className="grid min-h-[380px] grid-cols-1 lg:grid-cols-[58%_42%]">
+        {/* 50% LEFT + 50% RIGHT */}
+        <div className="grid min-h-[350px] grid-cols-1 lg:grid-cols-2">
 
           {/* ================= LEFT ================= */}
 
@@ -27,12 +28,12 @@ export default function NewArrivalBanner() {
               flex
               items-center
               bg-[#203529]
-              px-8
-              py-12
-              sm:px-10
-              lg:px-14
-              lg:py-12
-              xl:px-16
+              px-7
+              py-9
+              sm:px-9
+              lg:px-11
+              lg:py-9
+              xl:px-14
             "
             style={{
               backgroundImage:
@@ -40,14 +41,14 @@ export default function NewArrivalBanner() {
               backgroundSize: "28px 28px",
             }}
           >
-            {/* subtle dark overlay */}
+            {/* Subtle dark overlay */}
             <div className="absolute inset-0 bg-[#183126]/10" />
 
-            <div className="relative z-10 max-w-[560px]">
+            <div className="relative z-10 max-w-[500px]">
 
               {/* Subtitle */}
 
-              <p className="text-[9px] font-medium uppercase tracking-[0.38em] text-[#d3a44f] sm:text-[10px]">
+              <p className="text-[9px] font-medium uppercase tracking-[0.35em] text-[#d3a44f] sm:text-[10px]">
                 {banner.subtitle}
               </p>
 
@@ -55,14 +56,14 @@ export default function NewArrivalBanner() {
 
               <h2
                 className="
-                  mt-5
-                  text-[38px]
+                  mt-4
+                  text-[36px]
                   font-light
                   leading-[1.05]
                   text-white
-                  sm:text-[42px]
-                  lg:text-[46px]
-                  xl:text-[48px]
+                  sm:text-[40px]
+                  lg:text-[43px]
+                  xl:text-[46px]
                 "
                 style={{
                   fontFamily: "Cormorant Garamond, serif",
@@ -79,12 +80,11 @@ export default function NewArrivalBanner() {
 
               <p
                 className="
-                  mt-5
-                  max-w-[500px]
-                  text-[12px]
-                  leading-[1.9]
+                  mt-4
+                  max-w-[460px]
+                  text-[12.5px]
+                  leading-[1.75]
                   text-white/80
-                  sm:text-[13px]
                 "
               >
                 {banner.description}
@@ -92,22 +92,22 @@ export default function NewArrivalBanner() {
 
               {/* Buttons */}
 
-              <div className="mt-7 flex flex-wrap gap-3">
+              <div className="mt-6 flex flex-wrap gap-3">
 
                 <Link
                   to={banner.buttonLink}
                   className="
                     inline-flex
-                    h-[46px]
-                    min-w-[190px]
+                    h-[43px]
+                    min-w-[175px]
                     items-center
                     justify-center
                     bg-[#b8862b]
-                    px-6
-                    text-[10px]
+                    px-5
+                    text-[9px]
                     font-semibold
                     uppercase
-                    tracking-[0.18em]
+                    tracking-[0.17em]
                     text-white
                     transition-all
                     duration-300
@@ -121,17 +121,17 @@ export default function NewArrivalBanner() {
                   to={banner.secondaryButtonLink}
                   className="
                     inline-flex
-                    h-[46px]
-                    min-w-[190px]
+                    h-[43px]
+                    min-w-[175px]
                     items-center
                     justify-center
                     border
                     border-white/45
-                    px-6
-                    text-[10px]
+                    px-5
+                    text-[9px]
                     font-semibold
                     uppercase
-                    tracking-[0.18em]
+                    tracking-[0.17em]
                     text-white
                     transition-all
                     duration-300
@@ -149,7 +149,7 @@ export default function NewArrivalBanner() {
 
           {/* ================= RIGHT ================= */}
 
-          <div className="relative min-h-[300px] lg:min-h-[380px]">
+          <div className="relative min-h-[280px] lg:min-h-[350px]">
 
             <picture>
               <source
@@ -171,7 +171,7 @@ export default function NewArrivalBanner() {
               />
             </picture>
 
-            {/* Reference-style overlay */}
+            {/* Image overlay */}
 
             <div className="absolute inset-0 bg-black/20" />
 

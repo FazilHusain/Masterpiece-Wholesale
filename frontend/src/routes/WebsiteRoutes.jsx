@@ -37,6 +37,7 @@ import SetPassword from "../components/website/trade/SetPassword";
 import TradeForgotPassword from "../components/website/trade/TradeForgotPassword";
 import TradeResetPassword from "../components/website/trade/TradeResetPassword";
 import SamplePayment from "../components/website/sampleOrder/SamplePayment";
+import NotFound from "../pages/website/NotFound";
 
 // Forgot Password
 
@@ -93,6 +94,12 @@ export default function WebsiteRoutes() {
 
         <Route path="/journal/:slug" element={<JournalDetail />} />
 
+        {/* <Route path="/shipping" element={<Shipping />} />
+        <Route path="/returns-exchanges" element={<ReturnsExchanges />} />
+        <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/faqs" element={<FAQs />} /> */}
+
         {/* Trade Login */}
         <Route path="/trade-login" element={<TradeLogin />} />
 
@@ -137,6 +144,7 @@ export default function WebsiteRoutes() {
           element={<TradeSetPassword />}
         /> */}
       </Route>
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

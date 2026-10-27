@@ -28,6 +28,7 @@ const updateProduct = async (req, res, next) => {
       material,
       pattern,
       colorFamily,
+      hsCode,
       countryOfOrigin,
       leadTime,
       careInstructions,
@@ -119,6 +120,8 @@ const updateProduct = async (req, res, next) => {
     product.pattern = pattern ?? product.pattern;
 
     product.colorFamily = colorFamily ?? product.colorFamily;
+
+    product.hsCode = hsCode ?? product.hsCode;
 
     product.countryOfOrigin = countryOfOrigin ?? product.countryOfOrigin;
 

@@ -49,11 +49,11 @@ export default function ProductTable({ products = [], loading, onDelete }) {
       render: (row) => <span className="font-medium">{row.sku}</span>,
     },
 
-    {
-      key: "collection",
-      title: "Collection",
-      render: (row) => row.collection?.name || "-",
-    },
+    // {
+    //   key: "collection",
+    //   title: "Collection",
+    //   render: (row) => row.collection?.name || "-",
+    // },
 
     {
       key: "category",

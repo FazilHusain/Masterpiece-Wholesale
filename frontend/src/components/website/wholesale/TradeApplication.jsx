@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import api from "../../../services/axios";
 import { Country } from "country-state-city";
-import { useMemo } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { tradeSchema } from "../../../validations/tradeSchema";
 
 const selectStyles = (error) => ({
@@ -76,6 +76,81 @@ const selectStyles = (error) => ({
 });
 
 export default function TradeApplication() {
+  const [products, setProducts] = useState([]);
+  const [productsLoading, setProductsLoading] = useState(false);
+  const [productRows, setProductRows] = useState([
+    { product: null, quantity: "1" },
+  ]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadProducts = async () => {
+      setProductsLoading(true);
+      try {
+        const { data } = await api.get(
+          `${import.meta.env.VITE_API_URL}/api/products`
+        );
+
+        const body = data?.data ?? data?.products ?? data;
+        const list = Array.isArray(body)
+          ? body
+          : Array.isArray(body?.products)
+            ? body.products
+            : Array.isArray(body?.results)
+              ? body.results
+              : [];
+
+        if (mounted) {
+          setProducts(
+            list
+              .filter((product) => product && product._id && product.name)
+              .map((product) => ({
+                value: product._id,
+                label: product.sku
+                  ? `${product.name} — ${product.sku}`
+                  : product.name,
+                name: product.name,
+                sku: product.sku || "",
+              }))
+          );
+        }
+      } catch (error) {
+        if (mounted) {
+          toast.error(
+            error.response?.data?.message ||
+              "Unable to load products. Please try again."
+          );
+        }
+      } finally {
+        if (mounted) setProductsLoading(false);
+      }
+    };
+
+    loadProducts();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const addProductRow = () => {
+    setProductRows((rows) => [...rows, { product: null, quantity: "1" }]);
+  };
+
+  const removeProductRow = (index) => {
+    setProductRows((rows) =>
+      rows.length === 1
+        ? [{ product: null, quantity: "1" }]
+        : rows.filter((_, i) => i !== index)
+    );
+  };
+
+  const updateProductRow = (index, key, value) => {
+    setProductRows((rows) =>
+      rows.map((row, i) => (i === index ? { ...row, [key]: value } : row))
+    );
+  };
+
   const {
     register,
     handleSubmit,
@@ -96,6 +171,7 @@ export default function TradeApplication() {
       city: "",
       country: null,
       categoriesInterested: [],
+      orderItems: "",
       message: "",
     },
   });
@@ -118,6 +194,10 @@ export default function TradeApplication() {
         annualPurchase: "",
         categoriesInterested:
           data.categoriesInterested?.map((item) => item.value) || [],
+        orderItems: productRows
+          .filter((row) => row.product && Number(row.quantity) > 0)
+          .map((row) => `${row.product.sku || row.product.name}, ${Number(row.quantity)}`)
+          .join("\n"),
         message: data.message?.trim() || "",
       };
 
@@ -139,8 +219,10 @@ export default function TradeApplication() {
         country: null,
         businessAddress: "",
         categoriesInterested: [],
+        orderItems: "",
         message: "",
       });
+      setProductRows([{ product: null, quantity: "1" }]);
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong.");
     }
@@ -427,6 +509,74 @@ export default function TradeApplication() {
                     />
                   )}
                 />
+              </div>
+
+              {/* Product Selection */}
+              <div>
+                <label className="mb-1.5 block text-[9px] font-semibold uppercase tracking-[0.2em] text-[#222]">
+                  Select Products
+                </label>
+
+                <p className="mb-3 text-[11px] leading-5 text-[#888]">
+                  Search your products, select a product and enter the required quantity.
+                </p>
+
+                <div className="space-y-3">
+                  {productRows.map((row, index) => (
+                    <div
+                      key={index}
+                      className="grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_100px_36px] sm:items-start"
+                    >
+                      <Select
+                        options={products}
+                        value={row.product}
+                        onChange={(option) =>
+                          updateProductRow(index, "product", option)
+                        }
+                        isSearchable
+                        isClearable
+                        isLoading={productsLoading}
+                        placeholder={productsLoading ? "Loading products..." : "Search product name or SKU"}
+                        noOptionsMessage={() =>
+                          productsLoading ? "Loading products..." : "No products found"
+                        }
+                        classNamePrefix="trade-select"
+                        styles={selectStyles()}
+                      />
+
+                      <input
+                        type="number"
+                        min="1"
+                        step="1"
+                        value={row.quantity}
+                        onChange={(event) =>
+                          updateProductRow(index, "quantity", event.target.value)
+                        }
+                        aria-label={`Quantity for product ${index + 1}`}
+                        placeholder="Quantity"
+                        className="h-11 w-full border border-[#e4ddd1] bg-white px-3 text-[13px] text-[#555] outline-none focus:border-[#b8934c]"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() => removeProductRow(index)}
+                        aria-label={`Remove product ${index + 1}`}
+                        title="Remove product"
+                        className="flex h-11 w-full items-center justify-center border border-[#e4ddd1] text-[18px] text-[#8b8175] transition hover:border-red-300 hover:text-red-600"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={addProductRow}
+                  className="mt-3 border border-[#b8934c] px-4 py-2 text-[9px] font-semibold uppercase tracking-[0.18em] text-[#8b6728] transition hover:bg-[#f5f1e9]"
+                >
+                  + Add Product
+                </button>
               </div>
 
               {/* Message */}

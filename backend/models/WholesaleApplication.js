@@ -65,7 +65,7 @@ const wholesaleApplicationSchema = new mongoose.Schema(
       default: "",
       trim: true,
     },
-    
+
     country: {
       type: String,
       required: true,
@@ -81,6 +81,12 @@ const wholesaleApplicationSchema = new mongoose.Schema(
     categoriesInterested: {
       type: [String],
       default: [],
+    },
+
+    orderItems: {
+      type: String,
+      default: "",
+      trim: true,
     },
 
     annualPurchase: {
@@ -102,7 +108,6 @@ const wholesaleApplicationSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-
     status: {
       type: String,
       enum: ["Pending", "Reviewing", "Approved", "Rejected"],

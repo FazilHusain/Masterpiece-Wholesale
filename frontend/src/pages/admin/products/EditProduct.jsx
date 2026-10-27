@@ -7,6 +7,7 @@ import {
   fetchProduct,
   updateProduct,
   uploadGalleryImages,
+  uploadProductVideo,
   uploadStoryImage,
   clearProduct,
 } from "../../../redux/product";
@@ -21,7 +22,9 @@ export default function EditProduct() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { product, loading } = useSelector((state) => state.product);
+  const { product, loading } = useSelector(
+    (state) => state.product,
+  );
 
   useEffect(() => {
     dispatch(fetchProduct(id));
@@ -31,7 +34,10 @@ export default function EditProduct() {
     };
   }, [dispatch, id]);
 
-  const handleSubmit = async (data, storyUploads = []) => {
+  const handleSubmit = async (
+    data,
+    storyUploads = [],
+  ) => {
     try {
       // =========================================
       // 1. UPDATE PRODUCT DATA
@@ -49,7 +55,9 @@ export default function EditProduct() {
       // =========================================
 
       const galleryFiles = Array.isArray(data.gallery)
-        ? data.gallery.filter((file) => file instanceof File)
+        ? data.gallery.filter(
+            (file) => file instanceof File,
+          )
         : [];
 
       // =========================================
@@ -66,7 +74,29 @@ export default function EditProduct() {
       }
 
       // =========================================
-      // 4. STORY IMAGES
+      // 4. PRODUCT VIDEOS
+      // =========================================
+
+      const videoUploads = Array.isArray(data.videos)
+        ? data.videos.filter(
+            (video) => video?.file instanceof File,
+          )
+        : [];
+
+      if (videoUploads.length > 0) {
+        for (const video of videoUploads) {
+          await dispatch(
+            uploadProductVideo({
+              id,
+              file: video.file,
+              title: video.title || "",
+            }),
+          ).unwrap();
+        }
+      }
+
+      // =========================================
+      // 5. STORY IMAGES
       // =========================================
 
       if (storyUploads.length > 0) {
@@ -82,19 +112,25 @@ export default function EditProduct() {
       }
 
       // =========================================
-      // 5. SUCCESS
+      // 6. SUCCESS
       // =========================================
 
-      toast.success("Product updated successfully.");
+      toast.success(
+        "Product updated successfully.",
+      );
 
       navigate("/admin/products");
     } catch (error) {
-      console.error("UPDATE PRODUCT ERROR:", error);
+      console.error(
+        "UPDATE PRODUCT ERROR:",
+        error,
+      );
 
       toast.error(
         typeof error === "string"
           ? error
-          : error?.message || "Failed to update product.",
+          : error?.message ||
+              "Failed to update product.",
       );
     }
   };
@@ -109,7 +145,10 @@ export default function EditProduct() {
 
   return (
     <>
-      <PageHeader title="Edit Product" subtitle="Update product details." />
+      <PageHeader
+        title="Edit Product"
+        subtitle="Update product details."
+      />
 
       <ProductForm
         mode="edit"

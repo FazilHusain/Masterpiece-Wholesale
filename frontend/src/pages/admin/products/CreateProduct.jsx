@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import {
   createProduct,
   uploadGalleryImages,
+  uploadProductVideo,
   uploadStoryImage,
 } from "../../../redux/product";
 
@@ -21,7 +22,9 @@ export default function CreateProduct() {
       // CREATE PRODUCT
       // =============================
 
-      const response = await dispatch(createProduct(data)).unwrap();
+      const response = await dispatch(
+        createProduct(data),
+      ).unwrap();
 
       const createdProduct = response?.data;
 
@@ -32,7 +35,9 @@ export default function CreateProduct() {
       const productId = createdProduct?._id;
 
       if (!productId) {
-        throw new Error("Product created but product ID was not returned.");
+        throw new Error(
+          "Product created but product ID was not returned.",
+        );
       }
 
       // =============================
@@ -40,7 +45,9 @@ export default function CreateProduct() {
       // =============================
 
       const galleryFiles = Array.isArray(data.gallery)
-        ? data.gallery.filter((file) => file instanceof File)
+        ? data.gallery.filter(
+            (file) => file instanceof File,
+          )
         : [];
 
       if (galleryFiles.length > 0) {
@@ -50,6 +57,28 @@ export default function CreateProduct() {
             files: galleryFiles,
           }),
         ).unwrap();
+      }
+
+      // =============================
+      // PRODUCT VIDEOS
+      // =============================
+
+      const videoUploads = Array.isArray(data.videos)
+        ? data.videos.filter(
+            (video) => video?.file instanceof File,
+          )
+        : [];
+
+      if (videoUploads.length > 0) {
+        for (const video of videoUploads) {
+          await dispatch(
+            uploadProductVideo({
+              id: productId,
+              file: video.file,
+              title: video.title || "",
+            }),
+          ).unwrap();
+        }
       }
 
       // =============================
@@ -76,17 +105,30 @@ export default function CreateProduct() {
 
       navigate("/admin/products");
     } catch (error) {
-      console.error("CREATE PRODUCT ERROR:", error);
+      console.error(
+        "CREATE PRODUCT ERROR:",
+        error,
+      );
 
-      toast.error(error?.message || error || "Failed to create product.");
+      toast.error(
+        error?.message ||
+          error ||
+          "Failed to create product.",
+      );
     }
   };
 
   return (
     <>
-      <PageHeader title="Create Product" subtitle="Add a new product." />
+      <PageHeader
+        title="Create Product"
+        subtitle="Add a new product."
+      />
 
-      <ProductForm mode="create" onSubmit={handleSubmit} />
+      <ProductForm
+        mode="create"
+        onSubmit={handleSubmit}
+      />
     </>
   );
 }

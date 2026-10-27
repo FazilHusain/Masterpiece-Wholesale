@@ -4,23 +4,23 @@ import { useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 import { createQuickOrder } from "../../../redux/websiteQuickOrder/tradeQuickOrderThunk";
 
 const steps = [
   {
-    no: "1",
+    no: "01",
     title: "Paste your SKUs",
     desc: "Enter your SKU codes and quantities in the box to the left — one item per line.",
   },
   {
-    no: "2",
+    no: "02",
     title: "Send via WhatsApp",
     desc: 'Click "Send Order via WhatsApp" and your list will be formatted and sent to our trade team instantly.',
   },
   {
-    no: "3",
+    no: "03",
     title: "Confirmation",
     desc: "Our team confirms availability, pricing and dispatch timeline within a few hours.",
   },
@@ -31,7 +31,9 @@ export default function QuickOrderSection() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { loading } = useSelector((state) => state.websiteQuickOrder);
+  const { loading } = useSelector(
+    (state) => state.websiteQuickOrder,
+  );
 
   const [orderText, setOrderText] = useState("");
   const [notes, setNotes] = useState("");
@@ -72,7 +74,9 @@ Thank you.`;
       notes,
     };
 
-    const resultAction = await dispatch(createQuickOrder(payload));
+    const resultAction = await dispatch(
+      createQuickOrder(payload),
+    );
 
     if (createQuickOrder.fulfilled.match(resultAction)) {
       toast.success("Quick Order submitted successfully.");
@@ -81,14 +85,16 @@ Thank you.`;
       setNotes("");
     } else {
       toast.error(
-        resultAction.payload?.message || "Failed to submit quick order.",
+        resultAction.payload?.message ||
+          "Failed to submit quick order.",
       );
     }
   };
 
   return (
-    <section className="bg-[#FAF8F4] py-12 md:py-14">
-      <div className="mx-auto max-w-[1180px] px-5 lg:px-7">
+    <section className="bg-[#FAF8F4] py-7 sm:py-9 lg:py-10">
+      <div className="mx-auto max-w-[1180px] px-4 sm:px-6 lg:px-7">
+
         {/* ======================================================
             BACK TO DASHBOARD
         ====================================================== */}
@@ -97,7 +103,19 @@ Thank you.`;
           <button
             type="button"
             onClick={() => navigate("/trade/dashboard")}
-            className="mb-7 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#183425] transition hover:text-[#B68C2F]"
+            className="
+              mb-6
+              inline-flex
+              items-center
+              gap-2
+              text-[10px]
+              font-semibold
+              uppercase
+              tracking-[0.18em]
+              text-[#183425]
+              transition
+              hover:text-[#B68C2F]
+            "
           >
             <ArrowLeft size={14} />
             Back to Dashboard
@@ -105,46 +123,111 @@ Thank you.`;
         )}
 
         {/* ======================================================
-            MAIN GRID
+            PAGE INTRO
         ====================================================== */}
 
-        <div className="grid items-start gap-10 lg:grid-cols-2 lg:gap-14">
+        <div className="mb-7 max-w-[700px]">
+          <span
+            className="
+              text-[9px]
+              font-medium
+              uppercase
+              tracking-[0.4em]
+              text-[#B68C2F]
+            "
+          >
+            QUICK ORDER
+          </span>
+
+          <h1
+            className="
+              mt-2
+              text-[30px]
+              leading-[1.05]
+              text-[#183425]
+              sm:text-[34px]
+              lg:text-[36px]
+            "
+            style={{
+              fontFamily: "Cormorant Garamond, serif",
+              fontWeight: 400,
+            }}
+          >
+            Place Your{" "}
+            <span className="italic">Bulk Order</span>
+          </h1>
+
+          <p className="mt-2 max-w-[650px] text-[12px] leading-5 text-[#6B6259] sm:text-[13px]">
+            Send us your SKU list and quantities. Our trade team will
+            review availability, pricing and dispatch timelines with
+            you.
+          </p>
+        </div>
+
+        {/* ======================================================
+            MAIN CONTENT
+        ====================================================== */}
+
+        <div className="grid items-stretch gap-6 lg:grid-cols-[1.08fr_0.92fr]">
+
           {/* ====================================================
               LEFT — ORDER FORM
           ==================================================== */}
 
-          <div>
-            {/* Heading */}
+          <div
+            className="
+              border
+              border-[#E1D9CE]
+              bg-white
+              p-4
+              sm:p-5
+              lg:p-6
+            "
+          >
+            {/* FORM HEADER */}
 
-            <span className="text-[9px] font-medium uppercase tracking-[0.38em] text-[#B68C2F]">
-              BULK SKU ENTRY
-            </span>
+            <div className="border-b border-[#E9E2D9] pb-4">
+              <span
+                className="
+                  text-[9px]
+                  font-medium
+                  uppercase
+                  tracking-[0.3em]
+                  text-[#B68C2F]
+                "
+              >
+                BULK SKU ENTRY
+              </span>
 
-            <h2
-              className="mt-3 text-[31px] leading-[1.05] text-[#183425] md:text-[35px]"
-              style={{
-                fontFamily: "Cormorant Garamond, serif",
-              }}
-            >
-              Paste Your <span className="italic">Order List</span>
-            </h2>
+              <h2
+                className="
+                  mt-1.5
+                  text-[25px]
+                  leading-tight
+                  text-[#183425]
+                  sm:text-[27px]
+                "
+                style={{
+                  fontFamily: "Cormorant Garamond, serif",
+                  fontWeight: 400,
+                }}
+              >
+                Paste Your{" "}
+                <span className="italic">Order List</span>
+              </h2>
 
-            <p className="mt-3 max-w-[570px] text-[12px] leading-6 text-[#6B6259]">
-              Enter one SKU per line with the quantity. Your order will be sent
-              directly to our trade team via WhatsApp for fast processing.
-            </p>
+              <p className="mt-1.5 text-[12px] leading-5 text-[#6B6259]">
+                Enter one SKU per line with the required quantity.
+              </p>
+            </div>
 
-            {/* =================================================
-                FORM BOX
-            ================================================= */}
+            {/* FORMAT */}
 
-            <div className="mt-6 border border-[#E4DDD3] bg-white p-5 md:p-6">
-              {/* SKU FORMAT */}
-
-              <div className="mb-4 flex flex-wrap items-center gap-2">
-                <p className="text-[10px] uppercase tracking-[0.12em] text-[#8B8174]">
+            <div className="mt-5">
+              <div className="mb-2.5 flex items-center gap-3">
+                <span className="text-[9px] font-semibold uppercase tracking-[0.16em] text-[#81786E]">
                   Format
-                </p>
+                </span>
 
                 <span className="bg-[#F5F1E8] px-2.5 py-1 font-mono text-[10px] text-[#6B6259]">
                   SKU-CODE, Quantity
@@ -156,77 +239,181 @@ Thank you.`;
               <textarea
                 value={orderText}
                 onChange={(e) => setOrderText(e.target.value)}
-                rows={7}
+                rows={6}
                 placeholder={`HM-TR-SPR-001, 24
 HM-DC-GAR-001, 12
 HM-CT-SMG-001, 6
 HM-CS-EMB-001, 18`}
-                className="h-[155px] w-full resize-none border border-[#DED8CF] bg-[#FEFDFB] px-3.5 py-3 text-[12px] leading-6 text-[#183425] outline-none transition placeholder:text-[#AAA197] focus:border-[#B68C2F]"
+                className="
+                  h-[145px]
+                  w-full
+                  resize-none
+                  border
+                  border-[#DED8CF]
+                  bg-[#FEFDFB]
+                  px-3.5
+                  py-3
+                  text-[12px]
+                  leading-5.5
+                  text-[#183425]
+                  outline-none
+                  transition
+                  placeholder:text-[#AAA197]
+                  focus:border-[#B68C2F]
+                "
               />
+            </div>
 
-              {/* NOTES */}
+            {/* NOTES */}
 
-              <div className="mt-5">
-                <label className="mb-2 block text-[9px] font-semibold uppercase tracking-[0.2em] text-[#183425]">
-                  Additional Notes
-                </label>
+            <div className="mt-4">
+              <label
+                className="
+                  mb-2
+                  block
+                  text-[9px]
+                  font-semibold
+                  uppercase
+                  tracking-[0.2em]
+                  text-[#183425]
+                "
+              >
+                Additional Notes
+              </label>
 
-                <textarea
-                  rows={4}
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Delivery instructions, preferred shipping, special requests..."
-                  className="h-[90px] w-full resize-none border border-[#DED8CF] bg-[#FEFDFB] px-3.5 py-3 text-[12px] leading-6 text-[#183425] outline-none transition placeholder:text-[#AAA197] focus:border-[#B68C2F]"
-                />
-              </div>
+              <textarea
+                rows={3}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Delivery instructions, preferred shipping, special requests..."
+                className="
+                  h-[78px]
+                  w-full
+                  resize-none
+                  border
+                  border-[#DED8CF]
+                  bg-[#FEFDFB]
+                  px-3.5
+                  py-3
+                  text-[12px]
+                  leading-5.5
+                  text-[#183425]
+                  outline-none
+                  transition
+                  placeholder:text-[#AAA197]
+                  focus:border-[#B68C2F]
+                "
+              />
+            </div>
 
-              {/* CATALOGUE LINK */}
+            {/* CATALOGUE */}
 
-              <p className="mt-4 text-[10px] text-[#8B8174]">
+            <div className="mt-3">
+              <p className="text-[10px] text-[#8B8174]">
                 Not sure of your SKUs?{" "}
                 <Link
                   to="/collections"
-                  className="font-medium text-[#183425] underline underline-offset-2 transition hover:text-[#B68C2F]"
+                  className="
+                    font-medium
+                    text-[#183425]
+                    underline
+                    underline-offset-2
+                    transition
+                    hover:text-[#B68C2F]
+                  "
                 >
                   Browse the full catalogue →
                 </Link>
               </p>
+            </div>
 
-              {/* =================================================
-                  ACTION BUTTONS
-              ================================================= */}
+            {/* ACTIONS */}
 
-              <div className="mt-6">
-                {/* Submit */}
+            <div className="mt-5 border-t border-[#E9E2D9] pt-5">
+
+              {/* SUBMIT */}
+
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={loading}
+                className="
+                  flex
+                  h-11
+                  w-full
+                  items-center
+                  justify-center
+                  bg-[#183425]
+                  px-5
+                  text-[9px]
+                  font-semibold
+                  uppercase
+                  tracking-[0.22em]
+                  text-white
+                  transition
+                  hover:bg-[#10271b]
+                  disabled:cursor-not-allowed
+                  disabled:opacity-60
+                "
+              >
+                {loading
+                  ? "SUBMITTING..."
+                  : "SUBMIT QUICK ORDER"}
+              </button>
+
+              {/* SECONDARY */}
+
+              <div className="mt-2.5 grid gap-2.5 sm:grid-cols-2">
 
                 <button
                   type="button"
-                  onClick={handleSubmit}
-                  disabled={loading}
-                  className="flex h-11 w-full items-center justify-center bg-[#183425] px-6 text-[9px] font-semibold uppercase tracking-[0.22em] text-white transition hover:bg-[#10271b] disabled:cursor-not-allowed disabled:opacity-60"
+                  onClick={handleWhatsApp}
+                  className="
+                    flex
+                    h-10
+                    items-center
+                    justify-center
+                    gap-2
+                    bg-[#25D366]
+                    px-4
+                    text-[9px]
+                    font-semibold
+                    uppercase
+                    tracking-[0.15em]
+                    text-white
+                    transition
+                    hover:bg-[#1EBE5D]
+                  "
                 >
-                  {loading ? "SUBMITTING..." : "SUBMIT QUICK ORDER"}
+                  <FaWhatsapp className="text-[15px]" />
+                  Chat on WhatsApp
                 </button>
 
-                {/* Secondary */}
+                <Link
+                  to="/collections"
+                  className="
+                    flex
+                    h-10
+                    items-center
+                    justify-center
+                    gap-2
+                    border
+                    border-[#183425]
+                    px-4
+                    text-[9px]
+                    font-semibold
+                    uppercase
+                    tracking-[0.15em]
+                    text-[#183425]
+                    transition
+                    hover:bg-[#183425]
+                    hover:text-white
+                  "
+                >
+                  Browse Catalogue
+                  <ArrowRight size={13} />
+                </Link>
 
-                <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <button
-                    type="button"
-                    onClick={handleWhatsApp}
-                    className="flex h-10 items-center justify-center gap-2 bg-[#25D366] px-5 text-[9px] font-semibold uppercase tracking-[0.17em] text-white transition hover:bg-[#1EBE5D]"
-                  >
-                    <FaWhatsapp className="text-[15px]" />
-                    Chat on WhatsApp
-                  </button>
-
-                  <Link
-                    to="/collections"
-                    className="flex h-10 items-center justify-center border border-[#183425] px-5 text-[9px] font-semibold uppercase tracking-[0.17em] text-[#183425] transition hover:bg-[#183425] hover:text-white"
-                  >
-                    Browse Catalogue
-                  </Link>
-                </div>
               </div>
             </div>
           </div>
@@ -235,38 +422,103 @@ HM-CS-EMB-001, 18`}
               RIGHT — HOW IT WORKS
           ==================================================== */}
 
-          <div className="lg:pt-0">
-            <span className="text-[9px] font-medium uppercase tracking-[0.38em] text-[#B68C2F]">
-              HOW IT WORKS
-            </span>
+          <div
+            className="
+              flex
+              flex-col
+              border
+              border-[#E1D9CE]
+              bg-[#F4F0E9]
+              p-4
+              sm:p-5
+              lg:p-6
+            "
+          >
+            {/* HEADER */}
 
-            <h2
-              className="mt-3 text-[29px] leading-[1.05] text-[#183425] md:text-[34px]"
-              style={{
-                fontFamily: "Cormorant Garamond, serif",
-              }}
-            >
-              Simple <span className="italic">3-Step</span> Process
-            </h2>
+            <div>
+              <span
+                className="
+                  text-[9px]
+                  font-medium
+                  uppercase
+                  tracking-[0.4em]
+                  text-[#B68C2F]
+                "
+              >
+                HOW IT WORKS
+              </span>
+
+              <h2
+                className="
+                  mt-2
+                  text-[27px]
+                  leading-[1.05]
+                  text-[#183425]
+                  sm:text-[30px]
+                "
+                style={{
+                  fontFamily: "Cormorant Garamond, serif",
+                  fontWeight: 400,
+                }}
+              >
+                Simple{" "}
+                <span className="italic">3-Step</span> Process
+              </h2>
+
+              <p className="mt-2 text-[12px] leading-5 text-[#6B6259]">
+                A simple way to send your wholesale requirements
+                directly to our trade team.
+              </p>
+            </div>
+
+            {/* STEPS */}
 
             <div className="mt-6 space-y-5">
               {steps.map((step) => (
-                <div key={step.no} className="flex items-start gap-4">
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center bg-[#183425] text-[9px] font-medium text-white">
+                <div
+                  key={step.no}
+                  className="flex items-start gap-3.5"
+                >
+                  {/* NUMBER */}
+
+                  <div
+                    className="
+                      flex
+                      h-8
+                      w-8
+                      shrink-0
+                      items-center
+                      justify-center
+                      bg-[#183425]
+                      text-[9px]
+                      font-medium
+                      tracking-[0.08em]
+                      text-white
+                    "
+                  >
                     {step.no}
                   </div>
 
-                  <div>
+                  {/* CONTENT */}
+
+                  <div className="pt-0.5">
                     <h3
-                      className="text-[18px] leading-tight text-[#183425]"
+                      className="
+                        text-[18px]
+                        leading-tight
+                        text-[#183425]
+                      "
                       style={{
-                        fontFamily: "Cormorant Garamond, serif",
+                        fontFamily:
+                          "Cormorant Garamond, serif",
+                        fontWeight: 400,
                       }}
                     >
                       {step.title}
                     </h3>
 
-                    <p className="mt-1.5 max-w-[440px] text-[11px] leading-5 text-[#6B6259]">
+                    <p className="mt-1 max-w-[430px] text-[11px] leading-5 text-[#6B6259]">
                       {step.desc}
                     </p>
                   </div>
@@ -274,36 +526,71 @@ HM-CS-EMB-001, 18`}
               ))}
             </div>
 
-            {/* HELP BOX */}
+            {/* SPACER */}
 
-            <div className="mt-7 bg-[#183425] px-5 py-4.5">
-              <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/10">
-                  <FaWhatsapp className="text-[17px] text-white" />
+            <div className="flex-1" />
+
+            {/* WHATSAPP HELP */}
+
+            <div className="mt-6 bg-[#183425] px-4 py-4 sm:px-5">
+              <div className="flex items-center gap-3.5">
+
+                <div
+                  className="
+                    flex
+                    h-10
+                    w-10
+                    shrink-0
+                    items-center
+                    justify-center
+                    rounded-full
+                    bg-white/10
+                  "
+                >
+                  <FaWhatsapp className="text-[18px] text-white" />
                 </div>
 
                 <div>
                   <p className="text-[10px] text-white/70">
-                    Need help placing your order?
+                    Prefer to speak directly?
+                  </p>
+
+                  <p className="mt-0.5 text-[10px] text-white/80">
+                    Reach our trade team on WhatsApp
                   </p>
 
                   <a
                     href="tel:+919876543210"
-                    className="mt-0.5 block text-[19px] font-semibold tracking-wide text-[#B68C2F] transition hover:text-white"
+                    className="
+                      mt-0.5
+                      block
+                      text-[18px]
+                      font-semibold
+                      tracking-wide
+                      text-[#B68C2F]
+                      transition
+                      hover:text-white
+                    "
                   >
                     +91 98765 43210
                   </a>
                 </div>
+
               </div>
             </div>
 
-            {/* SMALL INFO */}
+            {/* INFO */}
 
-            <div className="mt-5 border border-[#E4DDD3] bg-white px-5 py-4">
-              <p className="text-[11px] leading-5 text-[#777]">
-                For large wholesale requirements, our trade team can also help
-                with availability, pricing and production timelines before
-                confirming your order.
+            <div className="mt-3 border border-[#DDD5C9] bg-white px-4 py-3">
+              <p
+                className="text-[12px] italic leading-5.5 text-[#444]"
+                style={{
+                  fontFamily: "Cormorant Garamond, serif",
+                }}
+              >
+                For larger wholesale requirements, our trade team can
+                assist with availability, pricing and production
+                timelines before confirming your order.
               </p>
             </div>
           </div>

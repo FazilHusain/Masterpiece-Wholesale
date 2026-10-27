@@ -4,13 +4,10 @@ export default function TradeHighlights() {
   return (
     <section className="bg-[#f7f5f0] px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
       <div className="mx-auto max-w-[1240px]">
-
         {/* Outer Gold Frame */}
         <div className="relative border border-[#c8a76b] bg-[#fcfbf8] p-[7px]">
-
           {/* Inner Gold Frame */}
           <div className="relative border border-[#e7d4aa] px-5 py-10 sm:px-8 sm:py-11 lg:px-12 lg:py-12">
-
             {/* Top Gold Bar */}
             <div
               className="
@@ -31,7 +28,6 @@ export default function TradeHighlights() {
 
             {/* Content */}
             <div className="mx-auto max-w-[850px] text-center">
-
               {/* Eyebrow */}
               <p className="text-[9px] font-medium uppercase tracking-[0.38em] text-[#bf9550] sm:text-[10px]">
                 WHO WE ARE
@@ -65,18 +61,14 @@ export default function TradeHighlights() {
 
               {/* Description */}
               <p className="mx-auto mt-5 max-w-[760px] text-[13px] leading-[1.85] text-[#505050] sm:text-[13.5px]">
-                His Masterpiece is a design-led textile house rooted in India's
-                craft traditions. We design, produce, and supply handcrafted
-                home furnishings to retailers, interior designers, and boutique
-                hospitality brands worldwide. Born from a love of craft and
-                storytelling, we translate landscapes, gardens, and cultural
-                narratives into exquisite textiles – every collection rooted in
-                heritage design principles and made entirely in our own studio.
+                His Masterpiece is a design-led textile house rooted in India’s
+                craft traditions. We create handcrafted home furnishings
+                inspired by landscapes, gardens, and cultural stories, blending
+                heritage design with contemporary craftsmanship.
               </p>
 
               {/* Buttons */}
               <div className="mt-7 flex flex-wrap justify-center gap-3">
-
                 <Link
                   to="/about"
                   className="
@@ -116,13 +108,10 @@ export default function TradeHighlights() {
                 >
                   Trade Partnership
                 </Link>
-
               </div>
-
             </div>
           </div>
         </div>
-
       </div>
     </section>
   );

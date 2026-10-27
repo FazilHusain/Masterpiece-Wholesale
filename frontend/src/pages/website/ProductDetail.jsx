@@ -14,7 +14,6 @@ import ProductInfo from "../../components/website/product/ProductInfo";
 import ProductDescription from "../../components/website/product/ProductDescription";
 import ProductStory from "../../components/website/product/ProductStory";
 import ProductDownloads from "../../components/website/product/ProductDownloads";
-import ProductVideos from "../../components/website/product/ProductVideos";
 import RelatedProducts from "../../components/website/product/RelatedProducts";
 //import ProductCardSkeleton from "../../components/website/product/ProductCardSkeleton";
 import StickyProductCTA from "../../components/website/product/StickyProductCTA";
@@ -131,9 +130,9 @@ const ProductDetail = () => {
       )}
 
       {/* Videos */}
-      {product.videos?.length > 0 && (
+      {/* {product.videos?.length > 0 && (
         <ProductVideos videos={product.videos} />
-      )}
+      )} */}
 
       {/* Related Products */}
       {relatedProducts?.length > 0 && (
